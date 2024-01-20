@@ -1,12 +1,19 @@
+import 'dart:convert';
+import 'package:aquatropical_agent/pages/fournisseurs/fournisseurs_controller.dart';
+import 'package:aquatropical_agent/pages/journal/journal_controller.dart';
+import 'package:aquatropical_agent/pages/materiels/materiels_controller.dart';
+import 'package:aquatropical_agent/pages/poissons/poisson_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 
-import 'nouveau_poisson.dart';
-import 'poisson_controller.dart';
-
-class Poisson extends GetView<PoissonController> {
-  Poisson() {
+class ListFournisseurs extends GetView<FournisseursController> {
+  //
+  JournalController journalController = Get.find();
+  //
+  ListFournisseurs() {
     //
     controller.getAll();
     //
@@ -18,7 +25,7 @@ class Poisson extends GetView<PoissonController> {
       body: controller.obx(
         (state) {
           //
-          RxList poissons = RxList(state!);
+          List fournisseurs = state!;
           //
           RxString mot = "".obs;
           //
@@ -26,7 +33,7 @@ class Poisson extends GetView<PoissonController> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.only(left: 25, right: 25),
+                padding: const EdgeInsets.only(top: 20, left: 25, right: 25),
                 child: TextField(
                   onChanged: (t) {
                     //
@@ -52,44 +59,56 @@ class Poisson extends GetView<PoissonController> {
                   () => ListView(
                     padding: EdgeInsets.all(20),
                     children: List.generate(
-                      poissons.length,
+                      fournisseurs.length,
                       (index) {
-                        Map poisson = poissons[index];
+                        Map fournisseur = fournisseurs[index];
                         //
-                        if ("${poisson['nom']}"
+                        if ("${fournisseur['nom']}"
                             .toLowerCase()
                             .contains(mot.value.toLowerCase())) {
                           //
                           return ListTile(
+                            onTap: () {
+                              //
+                              TextEditingController quantite =
+                                  TextEditingController();
+                              //
+                              journalController.fournisseur.value = fournisseur;
+                              //
+                              Get.back();
+                            },
                             leading: SvgPicture.asset(
-                              "assets/FluentEmojiHighContrastTropicalFish.svg",
+                              "assets/GalaPortrait1.svg",
                               height: 30,
                               width: 30,
                             ),
                             title: Text(
-                              "${poisson['nom']}",
+                              "${fournisseur['nom']} ${fournisseur['postnom']} ${fournisseur['prenom']}",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            subtitle: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text("${poisson['prix']} "),
-                                Text(
-                                  "USD",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
+                            subtitle: RichText(
+                              text: TextSpan(
+                                style: TextStyle(color: Colors.black),
+                                children: [
+                                  TextSpan(
+                                      text: "${fournisseur['telephone']} "),
+                                  TextSpan(
+                                    text: "${fournisseur['type']}\n",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 15,
-                                      color: Colors.indigo),
-                                )
-                              ],
-                            ),
-                            trailing: Text(
-                              "${poisson['quantite']}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "${fournisseur['adresse']}\n",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 15,
+                                        color: Colors.indigo),
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -112,17 +131,6 @@ class Poisson extends GetView<PoissonController> {
             width: 40,
             child: CircularProgressIndicator(),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //
-          Get.to(NouvelPoisson());
-        },
-        child: SvgPicture.asset(
-          "assets/GalaAdd.svg",
-          height: 30,
-          width: 30,
         ),
       ),
     );

@@ -6,11 +6,17 @@ import 'package:aquatropical_agent/pages/materiels/materiels_controller.dart';
 import 'package:aquatropical_agent/pages/poissons/poisson_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'pages/accueil.dart';
 import 'pages/journal/journal_controller.dart';
+import 'pages/login/login.dart';
+import 'pages/splash.dart';
 
 void main() async {
+  //
+  WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
   //
   MaterielController materielController = Get.put(MaterielController());
   //
@@ -36,17 +42,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'AquaTropical',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
+        title: 'AquaTropical',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.indigo,
+          ),
+          useMaterial3: true,
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+              selectedItemColor: Colors.black,
+              unselectedItemColor: Colors.grey.shade400),
         ),
-        useMaterial3: true,
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            selectedItemColor: Colors.black,
-            unselectedItemColor: Colors.grey.shade400),
-      ),
-      home: Accueil(),
-    );
+        home: Spalsh()
+        //Login()
+        //Accueil(),
+        );
   }
 }

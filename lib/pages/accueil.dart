@@ -88,7 +88,7 @@ class Accueil extends StatelessWidget {
                   width: 30,
                 ),
                 activeIcon: SvgPicture.asset(
-                    "assets/SolarChecklistMinimalisticLinear.svg",
+                    "assets/SolarUsersGroupRoundedLinear.svg",
                     height: 30,
                     width: 30,
                     color: Colors.indigo),

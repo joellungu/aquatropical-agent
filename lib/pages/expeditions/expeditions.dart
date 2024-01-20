@@ -5,15 +5,27 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
+import 'details_expeditions.dart';
+
 class Expedition extends GetView<ExpeditionController> {
   List produits = [
     {"": ""}
   ];
   //
+  RxBool mois = true.obs;
+  //
   Expedition() {
     //
-    controller.load();
     //
+    DateTime date = DateTime.now();
+    //
+    String d = "${date.day}-${date.month}-${date.year}";
+    //
+    if (mois.value) {
+      controller.getForMonth(d);
+    } else {
+      controller.getForDay(d);
+    }
   }
 
   //
@@ -26,6 +38,10 @@ class Expedition extends GetView<ExpeditionController> {
           CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
+                // title: Text(
+                //   "Salut",
+                //   style: TextStyle(color: Colors.black),
+                // ),
                 //backgroundColor: Colors.grey,
                 onStretchTrigger: () {
                   print("Le truc strck");
@@ -37,20 +53,50 @@ class Expedition extends GetView<ExpeditionController> {
                 expandedHeight: Get.size.height / 2.7,
                 flexibleSpace: FlexibleSpaceBar(
                   expandedTitleScale: 2,
-                  background: Stack(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: CalendarDatePicker(
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2024),
-                          lastDate: DateTime(2030),
-                          onDateChanged: (d) {
-                            print("date: $d");
-                          },
-                        ),
-                      ),
-                    ],
+                  // title: Container(
+                  //   height: 35,
+                  //   alignment: Alignment.center,
+                  //   // padding: const EdgeInsets.symmetric(
+                  //   //   horizontal: 5,
+                  //   // ),
+                  //   child: TextField(
+                  //     decoration: InputDecoration(
+                  //       border: OutlineInputBorder(
+                  //           borderRadius: BorderRadius.circular(15)),
+                  //       prefixIcon: Container(
+                  //         padding: EdgeInsets.all(5),
+                  //         height: 20,
+                  //         width: 20,
+                  //         child: SvgPicture.asset(
+                  //           "assets/GalaSearch.svg",
+                  //           height: 20,
+                  //           width: 20,
+                  //           color: Colors.indigo,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  background: Obx(
+                    () => !mois.value
+                        ? Container(
+                            padding: const EdgeInsets.all(10),
+                            child: CalendarDatePicker(
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2024),
+                              lastDate: DateTime(2030),
+                              onDateChanged: (dd) async {
+                                print("date: $dd");
+                                //
+                                String d = "${dd.day}-${dd.month}-${dd.year}";
+                                //
+                                controller.getForDay(d);
+                              },
+                            ),
+                          )
+                        : Center(
+                            child: Text("Journal du mois"),
+                          ),
                   ),
                   centerTitle: false,
                 ),
@@ -103,9 +149,31 @@ class Expedition extends GetView<ExpeditionController> {
                               flex: 4,
                               child: Container(
                                 alignment: Alignment.centerRight,
-                                child: Switch(
-                                  onChanged: (e) {},
-                                  value: true,
+                                child: Obx(
+                                  () => Switch(
+                                    onChanged: (e) async {
+                                      //
+                                      mois.value = e;
+                                      //
+                                      DateTime date = DateTime.now();
+                                      //
+                                      if (mois.value) {
+                                        //
+                                        String d =
+                                            "${date.day}-${date.month}-${date.year}";
+                                        //
+                                        controller.getForMonth(d);
+                                      } else {
+                                        String d =
+                                            "${date.day}-${date.month}-${date.year}";
+                                        //
+                                        controller.getForDay(d);
+                                      }
+                                      print("mois.value: ${mois.value}");
+                                      //
+                                    },
+                                    value: mois.value,
+                                  ),
                                 ),
                               ),
                             ),
@@ -121,264 +189,95 @@ class Expedition extends GetView<ExpeditionController> {
               ),
               controller.obx(
                 (state) {
-                  //
-                  List produits = state!;
-                  //
+                  List journals = state!;
                   return SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                         //String e = liste.toList()[index];
-                        //var r = produits[index];
-                        Map produit = produits[index];
-                        return InkWell(
-                          splashColor: Colors.blue.shade100.withOpacity(0.5),
+                        var j = journals[index];
+                        print("journal: $j");
+                        return ListTile(
                           onTap: () {
                             //
-                            // Get.to(
-                            //   Details(
-                            //     {"profil": "assets/maq${index + 4}-removebg-preview.png"},
-                            //   ),
-                            // );
+                            Get.to(DetailsExpedition(j));
+                            //
                           },
-                          child: Container(
-                            margin: const EdgeInsets.all(5),
-                            height: Get.size.height / 4.5,
-                            child: Stack(
+                          leading: Container(
+                            height: 30,
+                            width: 30,
+                            child: SvgPicture.asset(
+                              "assets/MynauiSend.svg",
+                              height: 30,
+                              width: 30,
+                            ),
+                            decoration: BoxDecoration(
+                              // image: DecorationImage(
+                              //     image: ExactAssetImage(
+                              //         "assets/${rapports[index]}"),
+                              //     fit: BoxFit.cover),
+                              //border: Border.all(color: Colors.black, width: 2),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                          ),
+                          title: Text(
+                            "${j['titre']}",
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: RichText(
+                            text: TextSpan(
+                              text: "${j['date']}   ${j['heure']}\n",
+                              style: TextStyle(
+                                color: Colors.green.shade700,
+                                fontWeight: FontWeight.bold,
+                              ),
                               children: [
-                                Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    elevation: 1,
-                                    child: SizedBox(
-                                      height: Get.size.height / 6.5,
-                                      width: double.maxFinite,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(),
-                                          ),
-                                          Expanded(
-                                            flex: 8,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Container(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: const Text(
-                                                      "Colis thailande",
-                                                      style: TextStyle(
-                                                        fontSize: 25,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    //color: Colors.amber,
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Container(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          SvgPicture.asset(
-                                                            "assets/SolarCalendarLinear.svg",
-                                                            height: 30,
-                                                            width: 30,
-                                                            color:
-                                                                Colors.indigo,
-                                                          ),
-                                                          Text(
-                                                            " 24-01-2024",
-                                                            style: TextStyle(
-                                                              fontSize: 15,
-                                                              color: Colors.grey
-                                                                  .shade700,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
-                                                      //color: Colors.cyan,
-                                                      ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Container(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          SvgPicture.asset(
-                                                            "assets/MynauiClockThree.svg",
-                                                            height: 30,
-                                                            width: 30,
-                                                            color:
-                                                                Colors.indigo,
-                                                          ),
-                                                          Text(
-                                                            " 12:00",
-                                                            style: TextStyle(
-                                                              fontSize: 15,
-                                                              color: Colors.grey
-                                                                  .shade700,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
-                                                      //color: Colors.cyan,
-                                                      ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Container(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          SvgPicture.asset(
-                                                            "assets/MynauiAeroplane.svg",
-                                                            height: 30,
-                                                            width: 30,
-                                                            color:
-                                                                Colors.indigo,
-                                                          ),
-                                                          Text(
-                                                            " 456 67 8798",
-                                                            style: TextStyle(
-                                                              color: Colors.teal
-                                                                  .shade700,
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
-                                                      //color: Colors.teal,
-                                                      ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Container(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        SvgPicture.asset(
-                                                          "assets/SolarBoxLinear.svg",
-                                                          height: 30,
-                                                          width: 30,
-                                                          color: Colors.indigo,
-                                                        ),
-                                                        const Text(
-                                                          " Poids : ",
-                                                          style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 15,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          " 100 Kg",
-                                                          style: TextStyle(
-                                                            color: Colors
-                                                                .blue.shade900,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 15,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    //color: Colors.teal,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                      bottom: 15, left: 5),
-                                  padding: const EdgeInsets.all(3),
-                                  height: Get.size.height / 4,
-                                  width: Get.size.width / 4.5,
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(20),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.blue.shade100.withOpacity(0.1),
-                                        Colors.blue.shade100.withOpacity(0.1),
-                                        Colors.blue.shade100.withOpacity(0.3),
-                                        Colors.blue.shade100.withOpacity(0.4),
-                                        Colors.blue.shade100.withOpacity(0.5),
-                                        Colors.blue.shade100,
-                                        Colors.blue.shade200,
-                                        Colors.blue.shade300,
-                                        Colors.blue.shade700,
-                                      ],
-                                      //tileMode: TileMode.decal,
-                                      //stops: [0.1, 0.2, 0.3],
-                                    ),
-                                  ),
-                                  child: Hero(
-                                    tag: "assets/carton.png",
-                                    child: Image.asset(
-                                      "assets/carton.png",
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
+                                TextSpan(
+                                    //
+                                    text: j['status'] == 0
+                                        ? "En attente"
+                                        : j['status'] == 1
+                                            ? "En transite"
+                                            : "Expedié",
+                                    style: TextStyle(
+                                      color: j['status'] == 0
+                                          ? Colors.blue.shade700
+                                          : j['status'] == 1
+                                              ? Colors.amber.shade700
+                                              : Colors.green.shade700,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+
+                                // WidgetSpan(
+                                //   child: FutureBuilder(
+                                //     future:
+                                //         controller.getAgent('${j['idAgent']}'),
+                                //     builder: (c, t) {
+                                //       if (t.hasData) {
+                                //         Map agent = t.data as Map;
+                                //         return Text(
+                                //             "${agent['nom'] ?? ''} ${agent['postnom'] ?? ''} ${agent['prenom'] ?? ''}");
+                                //       } else if (t.hasError) {
+                                //         return Container();
+                                //       }
+                                //       return Container();
+                                //     },
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
                         );
                       },
-                      childCount: produits.length,
+                      childCount: journals.length,
                     ),
                   );
                 },
+                onEmpty: SliverToBoxAdapter(
+                  child: Container(),
+                ),
                 onLoading: const SliverToBoxAdapter(
                   child: Center(
                     child: SizedBox(
@@ -387,9 +286,6 @@ class Expedition extends GetView<ExpeditionController> {
                       child: CircularProgressIndicator(),
                     ),
                   ),
-                ),
-                onEmpty: SliverToBoxAdapter(
-                  child: Column(),
                 ),
               ),
               const SliverToBoxAdapter(

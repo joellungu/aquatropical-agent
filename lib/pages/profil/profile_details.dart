@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class ProfileDetails extends StatelessWidget {
+  //
+  var box = GetStorage();
+  //
   @override
   Widget build(BuildContext context) {
     //
+    Map user = box.read("user") ?? {};
+    //
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Profile",
-          style: TextStyle(
-            fontSize: 30,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   title: const Text(
+      //     "Profile",
+      //     style: TextStyle(
+      //       fontSize: 30,
+      //     ),
+      //   ),
+      //   centerTitle: true,
+      // ),
       body: Padding(
         padding: EdgeInsets.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // ListTile(
-
             //   title: Text(
             //     "Profile",
             //     style: TextStyle(
@@ -37,57 +42,57 @@ class ProfileDetails extends StatelessWidget {
                 //
               },
               title: const Text(
-                "Nom complet",
+                "Noms",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               subtitle: Text(
-                "Mokpongbo Lungu Joel",
+                "${user['nom']} ${user['postnom']} ${user['prenom']}",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Colors.indigo,
                 ),
               ),
-              trailing: const Icon(Icons.edit),
+              //trailing: const Icon(Icons.edit),
             ),
+            // ListTile(
+            //   onTap: () {
+            //     //
+            //   },
+            //   title: const Text(
+            //     "Genre",
+            //     style: TextStyle(
+            //       fontSize: 20,
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            //   subtitle: Text(
+            //     "${user['nom']}",
+            //     style: TextStyle(
+            //       fontWeight: FontWeight.bold,
+            //       color: Colors.indigo,
+            //     ),
+            //   ),
+            //   trailing: const Icon(Icons.edit),
+            // ),
             ListTile(
               onTap: () {
                 //
               },
               title: const Text(
-                "Genre",
+                "Mot de passe",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               subtitle: Text(
-                "Homme",
+                "************",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-              ),
-              trailing: const Icon(Icons.edit),
-            ),
-            ListTile(
-              onTap: () {
-                //
-              },
-              title: const Text(
-                "Age",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              subtitle: Text(
-                "18 à 30 ans",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Colors.indigo,
                 ),
               ),
               trailing: const Icon(Icons.edit),
@@ -104,33 +109,33 @@ class ProfileDetails extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                "+243 815 381 693",
+                "${user['telephone']}",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Colors.indigo,
                 ),
               ),
-              trailing: const Icon(Icons.edit),
+              //trailing: const Icon(Icons.edit),
             ),
             ListTile(
               onTap: () {
                 //
               },
               title: const Text(
-                "Email",
+                "Role",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               subtitle: Text(
-                "lungujoel138@gmail.com",
+                "${user['role']}",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Colors.indigo,
                 ),
               ),
-              trailing: const Icon(Icons.edit),
+              //trailing: const Icon(Icons.edit),
             ),
             ListTile(
               onTap: () {
@@ -144,13 +149,13 @@ class ProfileDetails extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                "Kinshasa, C/Selembao, Q/Masangambila, Av: Bikolo N°12",
+                "${user['adresse']}",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Colors.indigo,
                 ),
               ),
-              trailing: const Icon(Icons.edit),
+              //trailing: const Icon(Icons.edit),
             ),
           ],
         ),

@@ -1,3 +1,4 @@
+import 'package:aquatropical_agent/pages/journal/details_journal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -32,13 +33,19 @@ class Journal extends GetView<JournalController> {
     20
   ].obs;
   //
+  RxBool mois = true.obs;
+  //
   Journal() {
     //
     DateTime date = DateTime.now();
     //
     String d = "${date.day}-${date.month}-${date.year}";
     //
-    controller.getForMonth(d);
+    if (mois.value) {
+      controller.getForMonth(d);
+    } else {
+      controller.getForDay(d);
+    }
     //
   }
   //
@@ -90,20 +97,26 @@ class Journal extends GetView<JournalController> {
                   //     ),
                   //   ),
                   // ),
-                  background: Stack(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: CalendarDatePicker(
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2024),
-                          lastDate: DateTime(2030),
-                          onDateChanged: (d) {
-                            print("date: $d");
-                          },
-                        ),
-                      ),
-                    ],
+                  background: Obx(
+                    () => !mois.value
+                        ? Container(
+                            padding: const EdgeInsets.all(10),
+                            child: CalendarDatePicker(
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2024),
+                              lastDate: DateTime(2030),
+                              onDateChanged: (dd) async {
+                                print("date: $dd");
+                                //
+                                String d = "${dd.day}-${dd.month}-${dd.year}";
+                                //
+                                controller.getForDay(d);
+                              },
+                            ),
+                          )
+                        : Center(
+                            child: Text("Journal du mois"),
+                          ),
                   ),
                   centerTitle: false,
                 ),
@@ -156,9 +169,31 @@ class Journal extends GetView<JournalController> {
                               flex: 4,
                               child: Container(
                                 alignment: Alignment.centerRight,
-                                child: Switch(
-                                  onChanged: (e) {},
-                                  value: true,
+                                child: Obx(
+                                  () => Switch(
+                                    onChanged: (e) async {
+                                      //
+                                      mois.value = e;
+                                      //
+                                      DateTime date = DateTime.now();
+                                      //
+                                      if (mois.value) {
+                                        //
+                                        String d =
+                                            "${date.day}-${date.month}-${date.year}";
+                                        //
+                                        controller.getForMonth(d);
+                                      } else {
+                                        String d =
+                                            "${date.day}-${date.month}-${date.year}";
+                                        //
+                                        controller.getForDay(d);
+                                      }
+                                      print("mois.value: ${mois.value}");
+                                      //
+                                    },
+                                    value: mois.value,
+                                  ),
                                 ),
                               ),
                             ),
@@ -172,87 +207,88 @@ class Journal extends GetView<JournalController> {
                   ),
                 ),
               ),
-              Obx(
-                () => SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      //String e = liste.toList()[index];
-                      var r = rapports[index];
-
-                      return ListTile(
-                        onTap: () {
-                          //
-                        },
-                        leading: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            // image: DecorationImage(
-                            //     image: ExactAssetImage(
-                            //         "assets/${rapports[index]}"),
-                            //     fit: BoxFit.cover),
-                            //border: Border.all(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(25),
+              controller.obx(
+                (state) {
+                  List journals = state!;
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        //String e = liste.toList()[index];
+                        var j = journals[index];
+                        print("journal: $j");
+                        return ListTile(
+                          onTap: () {
+                            //
+                            Get.to(DetailsJournal(j));
+                            //
+                          },
+                          leading: Container(
+                            height: 30,
+                            width: 30,
+                            child: SvgPicture.asset(
+                              "assets/SolarChecklistMinimalisticLinear.svg",
+                              height: 30,
+                              width: 30,
+                            ),
+                            decoration: BoxDecoration(
+                              // image: DecorationImage(
+                              //     image: ExactAssetImage(
+                              //         "assets/${rapports[index]}"),
+                              //     fit: BoxFit.cover),
+                              //border: Border.all(color: Colors.black, width: 2),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
                           ),
-                        ),
-                        title: const Text(
-                          "Hotel les délices du Ciel",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+                          title: Text(
+                            "${j['type']}",
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        subtitle: RichText(
-                          text: TextSpan(
-                            text: "",
-                            children: [
-                              WidgetSpan(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.yellow.shade700,
-                                      size: 15,
-                                    ),
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.yellow.shade700,
-                                      size: 15,
-                                    ),
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.yellow.shade700,
-                                      size: 15,
-                                    ),
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.yellow.shade700,
-                                      size: 15,
-                                    ),
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.yellow.shade700,
-                                      size: 15,
-                                    ),
-                                  ],
-                                ),
+                          subtitle: RichText(
+                            text: TextSpan(
+                              text: "${j['date']}   ${j['heure']}\n",
+                              style: TextStyle(
+                                color: Colors.green.shade700,
+                                fontWeight: FontWeight.bold,
                               ),
-                              const TextSpan(text: "\n"),
-                              TextSpan(
-                                text: "Matadit Q/Tsimba, Av: bulimo, N°20/22B",
-                                style: TextStyle(
-                                  color: Colors.grey.shade700,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
+                              children: [
+                                WidgetSpan(
+                                  child: FutureBuilder(
+                                    future:
+                                        controller.getAgent('${j['idAgent']}'),
+                                    builder: (c, t) {
+                                      if (t.hasData) {
+                                        Map agent = t.data as Map;
+                                        return Text(
+                                            "${agent['nom'] ?? ''} ${agent['postnom'] ?? ''} ${agent['prenom'] ?? ''}");
+                                      } else if (t.hasError) {
+                                        return Container();
+                                      }
+                                      return Container();
+                                    },
+                                  ),
                                 ),
-                              )
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    childCount: rapports.length,
+                        );
+                      },
+                      childCount: journals.length,
+                    ),
+                  );
+                },
+                onEmpty: SliverToBoxAdapter(
+                  child: Container(),
+                ),
+                onLoading: const SliverToBoxAdapter(
+                  child: Center(
+                    child: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
                 ),
               ),

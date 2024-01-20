@@ -27,7 +27,7 @@ class Fournisseur extends GetView<FournisseursController> {
       body: controller.obx(
         (state) {
           //
-          List agents = state!;
+          RxList agents = RxList(state!);
           //
           RxString mot = "".obs;
           //

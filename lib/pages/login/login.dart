@@ -85,6 +85,7 @@ class Login extends StatelessWidget {
                         ),
                         TextFormField(
                           controller: numero,
+                          keyboardType: TextInputType.number,
                           validator: (e) {
                             if (e!.isEmpty) {
                               return "Veuilliez inserer votre nom d'utilisateur ou votre numéro";
@@ -97,7 +98,7 @@ class Login extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             prefixIcon: const Icon(Icons.person),
-                            hintText: "Nom d'utilisateur",
+                            hintText: "Numéro téléphone",
                           ),
                         ),
                         const SizedBox(
@@ -143,17 +144,7 @@ class Login extends StatelessWidget {
 
                             Loader.attente();
                             //
-                            loginController.loagingAgent(
-                                "243${numero.text}", mdp.text);
-                            //Get.offAll(Accueil());
-                            // Timer(Duration(seconds: 3), () {
-                            //   Get.back();
-                            //   Get.off(Accueil());
-                            // });
-                            Map e = {
-                              "pseudo": numero.text,
-                              "pwd": mdp.text,
-                            };
+                            loginController.loagingAgent(numero.text, mdp.text);
                             //appController.login(e);
                             //loginController.deja.value = true;
                             //}
