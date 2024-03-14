@@ -5,6 +5,8 @@ class ExpeditionController extends GetxController with StateMixin<List> {
   //
   Requete requete = Requete();
   //
+  RxList expedition = [].obs;
+  //
   RxList poissons = [].obs;
   RxList poissonsExp = [].obs;
   //
@@ -72,7 +74,7 @@ class ExpeditionController extends GetxController with StateMixin<List> {
       //
       Get.back();
       Get.snackbar(
-          "Oups", "Enregistrement non éffectué code: ${response.statusCode}");
+          "Oups", "Modificatio non éffectué code: ${response.statusCode}");
       getForMonth(dateTime);
     }
   }

@@ -12,6 +12,8 @@ import 'pages/accueil.dart';
 import 'pages/journal/journal_controller.dart';
 import 'pages/login/login.dart';
 import 'pages/splash.dart';
+import 'pages/taux_controller.dart';
+import 'utils/agent_controller.dart';
 
 void main() async {
   //
@@ -30,6 +32,10 @@ void main() async {
   ExpeditionController expeditionController = Get.put(ExpeditionController());
   //
   JournalController journalController = Get.put(JournalController());
+  //
+  TauxController tauxController = Get.put(TauxController());
+  //
+  AgentController agentController = Get.put(AgentController());
   //
 
   runApp(const MyApp());

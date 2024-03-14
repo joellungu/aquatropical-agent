@@ -14,12 +14,14 @@ class Expedition extends GetView<ExpeditionController> {
   //
   RxBool mois = true.obs;
   //
+  String d = "";
+  //
   Expedition() {
     //
     //
     DateTime date = DateTime.now();
     //
-    String d = "${date.day}-${date.month}-${date.year}";
+    d = "${date.day}-${date.month}-${date.year}";
     //
     if (mois.value) {
       controller.getForMonth(d);
@@ -33,6 +35,7 @@ class Expedition extends GetView<ExpeditionController> {
   Widget build(BuildContext context) {
     //
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           CustomScrollView(
@@ -88,7 +91,7 @@ class Expedition extends GetView<ExpeditionController> {
                               onDateChanged: (dd) async {
                                 print("date: $dd");
                                 //
-                                String d = "${dd.day}-${dd.month}-${dd.year}";
+                                d = "${dd.day}-${dd.month}-${dd.year}";
                                 //
                                 controller.getForDay(d);
                               },
@@ -159,13 +162,11 @@ class Expedition extends GetView<ExpeditionController> {
                                       //
                                       if (mois.value) {
                                         //
-                                        String d =
-                                            "${date.day}-${date.month}-${date.year}";
+                                        d = "${date.day}-${date.month}-${date.year}";
                                         //
                                         controller.getForMonth(d);
                                       } else {
-                                        String d =
-                                            "${date.day}-${date.month}-${date.year}";
+                                        d = "${date.day}-${date.month}-${date.year}";
                                         //
                                         controller.getForDay(d);
                                       }
@@ -199,17 +200,12 @@ class Expedition extends GetView<ExpeditionController> {
                         return ListTile(
                           onTap: () {
                             //
-                            Get.to(DetailsExpedition(j));
+                            Get.to(DetailsExpedition(j, d));
                             //
                           },
                           leading: Container(
                             height: 30,
                             width: 30,
-                            child: SvgPicture.asset(
-                              "assets/MynauiSend.svg",
-                              height: 30,
-                              width: 30,
-                            ),
                             decoration: BoxDecoration(
                               // image: DecorationImage(
                               //     image: ExactAssetImage(
@@ -217,6 +213,11 @@ class Expedition extends GetView<ExpeditionController> {
                               //     fit: BoxFit.cover),
                               //border: Border.all(color: Colors.black, width: 2),
                               borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/MynauiSend.svg",
+                              height: 30,
+                              width: 30,
                             ),
                           ),
                           title: Text(

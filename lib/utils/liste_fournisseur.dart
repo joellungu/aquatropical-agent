@@ -25,7 +25,7 @@ class ListFournisseurs extends GetView<FournisseursController> {
       body: controller.obx(
         (state) {
           //
-          List fournisseurs = state!;
+          RxList fournisseurs = RxList(state!);
           //
           RxString mot = "".obs;
           //
@@ -41,7 +41,7 @@ class ListFournisseurs extends GetView<FournisseursController> {
                     //
                   },
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search),
                     hintText: "Nom du poisson",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),

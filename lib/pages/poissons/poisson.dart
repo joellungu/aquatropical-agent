@@ -15,6 +15,7 @@ class Poisson extends GetView<PoissonController> {
   Widget build(BuildContext context) {
     //
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: controller.obx(
         (state) {
           //
@@ -72,22 +73,38 @@ class Poisson extends GetView<PoissonController> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            subtitle: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text("${poisson['prix']} "),
-                                Text(
-                                  "USD",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
+                            subtitle: Text.rich(
+                              TextSpan(
+                                text: "${poisson['prixUSD']} ",
+                                children: [
+                                  const TextSpan(
+                                    text: "USD\n",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 15,
-                                      color: Colors.indigo),
-                                )
-                              ],
+                                      color: Colors.indigo,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "${poisson['taille']}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: Colors.green.shade900,
+                                    ),
+                                    //children: [TextSpan(text: "")],
+                                  ),
+                                ],
+                              ),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.black,
+                              ),
                             ),
                             trailing: Text(
                               "${poisson['quantite']}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
                               ),

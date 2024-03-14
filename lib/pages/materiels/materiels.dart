@@ -25,6 +25,7 @@ class Materiel extends GetView<MaterielController> {
   Widget build(BuildContext context) {
     //
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: controller.obx(
         (state) {
           //
@@ -81,18 +82,34 @@ class Materiel extends GetView<MaterielController> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          subtitle: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text("${produit['prix']} "),
-                              Text(
-                                "${produit['devise']}",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
+                          subtitle: Text.rich(
+                            TextSpan(
+                              text: "${produit['prixUSD']} ",
+                              children: [
+                                const TextSpan(
+                                  text: "USD\n",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
                                     fontSize: 15,
-                                    color: Colors.indigo),
-                              )
-                            ],
+                                    color: Colors.indigo,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "${produit['prixCDF']} CDF",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    color: Colors.green.shade900,
+                                  ),
+                                  //children: [TextSpan(text: "")],
+                                ),
+                              ],
+                            ),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.black,
+                            ),
                           ),
                           trailing: Text(
                             "${produit['quantite']}",

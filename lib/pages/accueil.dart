@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:aquatropical_agent/pages/expeditions/expeditions.dart';
 import 'package:aquatropical_agent/pages/fournisseurs/fournisseurs.dart';
 import 'package:aquatropical_agent/pages/materiels/materiels.dart';
@@ -23,7 +25,31 @@ class Accueil extends StatelessWidget {
         title: const Text("AquaTropical"),
         centerTitle: true,
       ),
-      body: Obx(() => vue.value),
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.maxFinite,
+            decoration: const BoxDecoration(
+              //color: Colors.white,
+              image: DecorationImage(
+                image: AssetImage("assets/pngegg (1).png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 0.5, sigmaY: 0.5),
+              child: Opacity(
+                opacity: 0.9,
+                child: Container(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          Obx(() => vue.value),
+        ],
+      ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
           currentIndex: currentIndex.value,
@@ -39,8 +65,6 @@ class Accueil extends StatelessWidget {
               vue.value = Fournisseur();
             } else if (e == 3) {
               vue.value = Materiel();
-            } else if (e == 4) {
-              vue.value = Expedition();
             } else {
               vue.value = ProfileDetails();
             }
@@ -106,19 +130,19 @@ class Accueil extends StatelessWidget {
                   width: 30,
                 ),
                 label: "Materiels"),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  "assets/MynauiSend.svg",
-                  height: 30,
-                  width: 30,
-                ),
-                activeIcon: SvgPicture.asset(
-                  "assets/MynauiSend.svg",
-                  height: 30,
-                  width: 30,
-                  color: Colors.indigo,
-                ),
-                label: "Expédition"),
+            // BottomNavigationBarItem(
+            //     icon: SvgPicture.asset(
+            //       "assets/MynauiSend.svg",
+            //       height: 30,
+            //       width: 30,
+            //     ),
+            //     activeIcon: SvgPicture.asset(
+            //       "assets/MynauiSend.svg",
+            //       height: 30,
+            //       width: 30,
+            //       color: Colors.indigo,
+            //     ),
+            //     label: "Expédition"),
             BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   "assets/GalaPortrait1.svg",

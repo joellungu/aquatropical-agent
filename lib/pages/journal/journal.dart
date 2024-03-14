@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:aquatropical_agent/pages/journal/details_journal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,12 +7,13 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
+import 'exceller.dart';
 import 'journal_controller.dart';
 import 'nouveau_journal.dart';
 
 class Journal extends GetView<JournalController> {
   //
-  RxList rapports = [
+  RxList mois = [
     1,
     2,
     3,
@@ -23,17 +26,12 @@ class Journal extends GetView<JournalController> {
     10,
     11,
     12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
   ].obs;
   //
-  RxBool mois = true.obs;
+  RxInt iMois = 1.obs;
+  RxInt iAnnee = 2024.obs;
+  //
+  List resultats = [];
   //
   Journal() {
     //
@@ -41,11 +39,7 @@ class Journal extends GetView<JournalController> {
     //
     String d = "${date.day}-${date.month}-${date.year}";
     //
-    if (mois.value) {
-      controller.getForMonth(d);
-    } else {
-      controller.getForDay(d);
-    }
+    controller.getForMonth("${date.month}", "${date.year}");
     //
   }
   //
@@ -53,256 +47,334 @@ class Journal extends GetView<JournalController> {
   Widget build(BuildContext context) {
     //
     return Scaffold(
-      body: Stack(
+      //appBar: AppBar(),
+      backgroundColor: Colors.transparent,
+      body: Column(
         children: [
-          CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                // title: Text(
-                //   "Salut",
-                //   style: TextStyle(color: Colors.black),
-                // ),
-                //backgroundColor: Colors.grey,
-                onStretchTrigger: () {
-                  print("Le truc strck");
-                  return Future.value();
-                },
-                pinned: true,
-                snap: false,
-                floating: false,
-                expandedHeight: Get.size.height / 2.7,
-                flexibleSpace: FlexibleSpaceBar(
-                  expandedTitleScale: 2,
-                  // title: Container(
-                  //   height: 35,
-                  //   alignment: Alignment.center,
-                  //   // padding: const EdgeInsets.symmetric(
-                  //   //   horizontal: 5,
-                  //   // ),
-                  //   child: TextField(
-                  //     decoration: InputDecoration(
-                  //       border: OutlineInputBorder(
-                  //           borderRadius: BorderRadius.circular(15)),
-                  //       prefixIcon: Container(
-                  //         padding: EdgeInsets.all(5),
-                  //         height: 20,
-                  //         width: 20,
-                  //         child: SvgPicture.asset(
-                  //           "assets/GalaSearch.svg",
-                  //           height: 20,
-                  //           width: 20,
-                  //           color: Colors.indigo,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  background: Obx(
-                    () => !mois.value
-                        ? Container(
-                            padding: const EdgeInsets.all(10),
-                            child: CalendarDatePicker(
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2024),
-                              lastDate: DateTime(2030),
-                              onDateChanged: (dd) async {
-                                print("date: $dd");
-                                //
-                                String d = "${dd.day}-${dd.month}-${dd.year}";
-                                //
-                                controller.getForDay(d);
-                              },
-                            ),
-                          )
-                        : Center(
-                            child: Text("Journal du mois"),
-                          ),
-                  ),
-                  centerTitle: false,
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 90,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        height: 50,
-                        width: Get.size.width / 1.1,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.grey.shade300,
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Expanded(
-                              flex: 4,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.calendar,
-                                    size: 30,
-                                    color: Colors.indigo,
-                                  ),
-                                  Text(
-                                    " Tout le mois ",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 4,
-                              child: Container(
-                                alignment: Alignment.centerRight,
-                                child: Obx(
-                                  () => Switch(
-                                    onChanged: (e) async {
-                                      //
-                                      mois.value = e;
-                                      //
-                                      DateTime date = DateTime.now();
-                                      //
-                                      if (mois.value) {
-                                        //
-                                        String d =
-                                            "${date.day}-${date.month}-${date.year}";
-                                        //
-                                        controller.getForMonth(d);
-                                      } else {
-                                        String d =
-                                            "${date.day}-${date.month}-${date.year}";
-                                        //
-                                        controller.getForDay(d);
-                                      }
-                                      print("mois.value: ${mois.value}");
-                                      //
-                                    },
-                                    value: mois.value,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.indigo, width: 1),
+                    ),
+                    child: Obx(
+                      () => DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          onChanged: (m) {
+                            //
+                            iMois.value = m as int;
+                          },
+                          value: iMois.value,
+                          items: List.generate(mois.length, (index) {
+                            return DropdownMenuItem(
+                              child: Text("${index + 1}"),
+                              value: index + 1,
+                            );
+                          }),
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-              controller.obx(
-                (state) {
-                  List journals = state!;
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                        //String e = liste.toList()[index];
-                        var j = journals[index];
-                        print("journal: $j");
-                        return ListTile(
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.indigo, width: 1),
+                    ),
+                    child: Obx(
+                      () => DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          onChanged: (m) async {
+                            //
+                            iAnnee.value = m as int;
+                            //
+
+                            controller.getForMonth(
+                                "${iMois.value}", "${iAnnee.value}");
+                          },
+                          value: iAnnee.value,
+                          items: List.generate(100, (index) {
+                            return DropdownMenuItem(
+                              child: Text("${index + 2024}"),
+                              value: index + 2024,
+                            );
+                          }),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  flex: 3,
+                  child: PopupMenuButton(
+                    itemBuilder: (c) {
+                      return [
+                        PopupMenuItem(
+                          child: Text("Excel"),
                           onTap: () {
                             //
-                            Get.to(DetailsJournal(j));
-                            //
+                            Get.to(Exceller(resultats));
                           },
-                          leading: Container(
-                            height: 30,
-                            width: 30,
-                            child: SvgPicture.asset(
-                              "assets/SolarChecklistMinimalisticLinear.svg",
-                              height: 30,
-                              width: 30,
-                            ),
-                            decoration: BoxDecoration(
-                              // image: DecorationImage(
-                              //     image: ExactAssetImage(
-                              //         "assets/${rapports[index]}"),
-                              //     fit: BoxFit.cover),
-                              //border: Border.all(color: Colors.black, width: 2),
-                              borderRadius: BorderRadius.circular(25),
-                            ),
+                        ),
+                        PopupMenuItem(
+                          child: Text("PDF"),
+                        ),
+                      ];
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: controller.obx(
+              (state) {
+                List saisies = state!;
+                resultats = saisies;
+                return ListView(
+                  padding: const EdgeInsets.all(10),
+                  children: List.generate(
+                    saisies.length,
+                    (index) {
+                      Map saisie = saisies[index];
+                      //
+                      print("saisie: $saisie");
+                      //
+                      return InkWell(
+                        onTap: () {
+                          if (saisie['categorie'] == "Facture Poisson") {
+                            Get.to(DetailsJournal(saisie['idFacture']));
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(3),
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.indigo, width: 1),
                           ),
-                          title: Text(
-                            "${j['type']}",
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: RichText(
-                            text: TextSpan(
-                              text: "${j['date']}   ${j['heure']}\n",
-                              style: TextStyle(
-                                color: Colors.green.shade700,
-                                fontWeight: FontWeight.bold,
+                          //height: 200,
+                          width: double.maxFinite,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "${saisie['categorie']}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  saisie['categorie']
+                                          .contains("Facture Poisson")
+                                      ? Align(
+                                          alignment: Alignment.center,
+                                          child: Icon(Icons.print))
+                                      : Container(),
+                                ],
                               ),
-                              children: [
-                                WidgetSpan(
-                                  child: FutureBuilder(
-                                    future:
-                                        controller.getAgent('${j['idAgent']}'),
-                                    builder: (c, t) {
-                                      if (t.hasData) {
-                                        Map agent = t.data as Map;
-                                        return Text(
-                                            "${agent['nom'] ?? ''} ${agent['postnom'] ?? ''} ${agent['prenom'] ?? ''}");
-                                      } else if (t.hasError) {
-                                        return Container();
-                                      }
-                                      return Container();
-                                    },
+                              const Divider(),
+
+                              saisie['categorie'] == 'Facture Materiel' ||
+                                      saisie['categorie'] == 'Facture Poisson'
+                                  ? Container()
+                                  : Column(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Devise ",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                "${saisie['devise']}",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        Colors.green.shade900),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Montant: ",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                "${saisie['montant']}",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        Colors.green.shade900),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                              //
+                              //
+                              const Divider(),
+
+                              saisie['categorie'] == 'Facture Materiel'
+                                  ? Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "${jsonDecode(saisie['remarque'])['nom']} (${jsonDecode(saisie['remarque'])['quantite']})",
+                                        overflow: TextOverflow.clip,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                              saisie['categorie'] == 'Salaire' ||
+                                      saisie['categorie'] == "Soins médicaux"
+                                  ? Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "${saisie['remarque']}",
+                                        overflow: TextOverflow.clip,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                              //
+                              saisie['categorie'] == 'Perte poissons'
+                                  ? Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "${jsonDecode(saisie['remarque'])['nom']}",
+                                        overflow: TextOverflow.clip,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+
+                              saisie['categorie'] == 'Facture Poisson'
+                                  ? Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "${saisie['remarque']}".split(",")[1],
+                                        overflow: TextOverflow.clip,
+                                        //[0]['poisson']['nom']
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+
+                              saisie['categorie'] == 'Entrée Caisse' ||
+                                      saisie['categorie'] ==
+                                          'Prestation de service' ||
+                                      saisie['categorie'] == 'Loyer' ||
+                                      saisie['categorie'] ==
+                                          'Autres depenses' ||
+                                      saisie['categorie'] == 'Transport' ||
+                                      saisie['categorie'] == 'Vie Kin' ||
+                                      saisie['categorie'] == 'XCH'
+                                  ? Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "${saisie['remarque']}",
+                                        overflow: TextOverflow.clip,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                              const Divider(),
+                              Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "${saisie['date']}  ${saisie['heure']}",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                      childCount: journals.length,
-                    ),
-                  );
-                },
-                onEmpty: SliverToBoxAdapter(
-                  child: Container(),
-                ),
-                onLoading: const SliverToBoxAdapter(
-                  child: Center(
-                    child: SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: CircularProgressIndicator(),
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                ),
-              ),
-              const SliverToBoxAdapter(
+                );
+              },
+              onEmpty: Container(),
+              onError: (e) {
+                return Center(
+                  child: Text("Erreur code: $e"),
+                );
+              },
+              onLoading: const Center(
                 child: SizedBox(
-                  height: 100,
+                  height: 40,
+                  width: 40,
+                  child: CircularProgressIndicator(),
                 ),
               ),
-            ],
-          )
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
+          //
+          controller.getTaux();
           //
           Get.to(NouveauJournal());
           //
@@ -310,5 +382,15 @@ class Journal extends GetView<JournalController> {
         child: Icon(Icons.add),
       ),
     );
+  }
+
+  //
+  String poiss(List poissons) {
+    String ps = "";
+    poissons.forEach((element) {
+      //
+      ps = "$ps ${element['poisson']['nom']}\n";
+    });
+    return ps;
   }
 }

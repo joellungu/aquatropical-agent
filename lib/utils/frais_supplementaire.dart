@@ -168,7 +168,7 @@ class FraisSupplementaire extends StatelessWidget {
                     public String adresse;
                     public int status;
                    */
-                  journalController.fraisSupplementaire.add(frais);
+                  journalController.fraisSupplementaire.value = frais;
                   //
                   Get.back();
                 },

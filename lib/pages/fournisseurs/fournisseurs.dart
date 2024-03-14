@@ -24,6 +24,7 @@ class Fournisseur extends GetView<FournisseursController> {
   Widget build(BuildContext context) {
     //
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: controller.obx(
         (state) {
           //

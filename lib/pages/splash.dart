@@ -32,6 +32,51 @@ class Spalsh extends StatelessWidget {
       body: Center(
         child: Text("AquaTropical"),
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     //
+      //     //
+      //     FilePickerResult? result = await FilePicker.platform.pickFiles(
+      //       dialogTitle: "Fichier CSV de la commande",
+      //       type: FileType.custom,
+      //       allowedExtensions: ["CSV", "csv"],
+      //     );
+      //     //
+      //     if (result != null) {
+      //       //fl = result;
+      //       File file = File(result.files.single.path!);
+      //       // rowsAsListOfValues = await file
+      //       //     .openRead()
+      //       //     .transform(utf8.decoder)
+      //       //     .transform(CsvToListConverter())
+      //       //     .toList();
+      //       //
+      //       //filename.value = result.names[0]!;
+      //       //
+      //       //print('fields: $rowsAsListOfValues');
+      //       //
+      //       List<String> l = file.readAsLinesSync(); //.split("\n");
+      //       l.removeAt(0);
+      //       //
+      //       l.forEach((e) {
+      //         List es = e.split(";");
+      //         //rowsAsListOfValues.add(es);
+      //         //
+      //       });
+      //       //
+      //       //rowsAsListOfValues.value = const CsvToListConverter().convert(data);
+      //       //
+      //       // print("dataa: ${l.length}");
+      //       // print("data: ${rowsAsListOfValues.length}");
+      //       // //
+      //       // final input = File(fichier).openRead();
+      //     } else {
+      //       // User canceled the picker
+      //     }
+      //     //
+      //   },
+      //   child: Icon(Icons.add),
+      // ),
     );
   }
 }

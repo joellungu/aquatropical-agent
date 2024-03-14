@@ -12,6 +12,7 @@ class ProfileDetails extends StatelessWidget {
     Map user = box.read("user") ?? {};
     //
     return Scaffold(
+      backgroundColor: Colors.transparent,
       // appBar: AppBar(
       //   title: const Text(
       //     "Profile",

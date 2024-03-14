@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 class FraisSupplementaireExp extends StatelessWidget {
   //
   final montant = TextEditingController();
-  final nom = TextEditingController();
+  //final nom = TextEditingController();
   //
   ExpeditionController expeditionController = Get.find();
   //
@@ -95,32 +95,33 @@ class FraisSupplementaireExp extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Nom",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-              TextField(
-                controller: nom,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  prefixIcon: Container(
-                    padding: const EdgeInsets.all(5),
-                    height: 20,
-                    width: 20,
-                  ),
-                ),
-              ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // const Align(
+              //   alignment: Alignment.centerLeft,
+              //   child: Text(
+              //     "Nom",
+              //     style: TextStyle(
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: 15,
+              //     ),
+              //   ),
+              // ),
+              // TextField(
+              //   controller: nom,
+              //   keyboardType: TextInputType.number,
+              //   decoration: InputDecoration(
+              //     border: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(15)),
+              //     prefixIcon: Container(
+              //       padding: const EdgeInsets.all(5),
+              //       height: 20,
+              //       width: 20,
+              //     ),
+              //   ),
+              // ),
+
               const SizedBox(
                 height: 10,
               ),
@@ -184,7 +185,7 @@ class FraisSupplementaireExp extends StatelessWidget {
                     "montant": montant.text,
                     "devise": devises[devise.value],
                     "type": roles[role.value],
-                    "nom": nom.text,
+                    "nom": "",
                   };
                   /**
                    * public String nom;

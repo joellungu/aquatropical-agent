@@ -25,7 +25,7 @@ class ListMateriels extends GetView<MaterielController> {
       body: controller.obx(
         (state) {
           //
-          List poissons = state!;
+          RxList poissons = RxList(state!);
           //
           RxString mot = "".obs;
           //
@@ -128,22 +128,38 @@ class ListMateriels extends GetView<MaterielController> {
                             ),
                             title: Text(
                               "${materiel['nom']}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            subtitle: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text("${materiel['prix']} "),
-                                Text(
-                                  "USD",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
+                            subtitle: Text.rich(
+                              TextSpan(
+                                text: "${materiel['prixUSD']} ",
+                                children: [
+                                  const TextSpan(
+                                    text: "USD\n",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 15,
-                                      color: Colors.indigo),
-                                )
-                              ],
+                                      color: Colors.indigo,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "${materiel['prixCDF']} CDF",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: Colors.green.shade900,
+                                    ),
+                                    //children: [TextSpan(text: "")],
+                                  ),
+                                ],
+                              ),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.black,
+                              ),
                             ),
                             trailing: Text(
                               "${materiel['quantite']}",
